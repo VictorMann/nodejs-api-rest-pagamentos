@@ -16,6 +16,15 @@ curl http://localhost:3000/pagamentos/pagamento
         "descricao": "descrição do pagamento"
     }'
 
+curl http://localhost:3000/pagamentos/pagamento
+    -X POST
+    -v
+    -H "Content-type: application/json"
+    -d @files/pagamento.json
+
 copy/paste cmd
-curl http://localhost:3000/pagamentos/pagamento -X POST -v -H "Content-type: application/json" -d "{\"forma_de_pagamento\": \"payfast\", \"valor\": \"10.87\", \"moeda\": \"BRL\", \"descricao\": \"descrição do pagamento\"}"
+literal:
+    curl http://localhost:3000/pagamentos/pagamento -X POST -v -H "Content-type: application/json" -d "{\"forma_de_pagamento\": \"payfast\", \"valor\": \"10.87\", \"moeda\": \"BRL\", \"descricao\": \"descrição do pagamento\"}"
+file:
+    curl http://localhost:3000/pagamentos/pagamento -X POST -v -H "Content-type: application/json" -d @files/pagamento.json
 =--
