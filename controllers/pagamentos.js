@@ -5,4 +5,11 @@ module.exports = function (app) {
         console.log('respondendo na rota pagamentos');
         res.send('Ok');
     });
+
+    // recebendo pagamento
+    app.post('/pagamentos/pagamento', function (req, res) {
+        let pagamento = req.body;
+        console.log(pagamento);
+        res.send('ok');
+    });
 }
