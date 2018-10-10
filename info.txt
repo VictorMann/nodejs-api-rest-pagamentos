@@ -1,0 +1,21 @@
++--
+utilizando o curl para requisições http
+-X POST : verbo da requisição
+-v      : resposta verbosa com headers e body
+-H      : cabeçalhos
+-d      : corpo
+
+curl http://localhost:3000/pagamentos/pagamento
+    -X POST
+    -v
+    -H "Content-type: application/json"
+    -d '{
+        "forma_de_pagamento": "payfast",
+        "valor": "10.87",
+        "moeda": "BRL",
+        "descricao": "descrição do pagamento"
+    }'
+
+copy/paste cmd
+curl http://localhost:3000/pagamentos/pagamento -X POST -v -H "Content-type: application/json" -d ´{"forma_de_pagamento":"payfast","valor":"10.87","moeda":"BRL","descricao":"descrição do pagamento"}´
+=--
