@@ -12,6 +12,7 @@ module.exports = function () {
     // auto-loader passando param
     consign()
     .include("controllers")
+    .then('persistencia')
     .into(app);
 
     return app;
