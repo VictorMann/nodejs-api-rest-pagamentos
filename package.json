@@ -14,6 +14,7 @@
   "author": "victormann",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "consign": "^0.1.6",
     "express": "^4.16.3"
   }
