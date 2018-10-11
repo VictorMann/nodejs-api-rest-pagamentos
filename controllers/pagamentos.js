@@ -15,7 +15,7 @@ module.exports = function (app) {
         req.assert('forma_de_pagamento', 'Forma de pagamento eh obrigatorio').notEmpty();
         req.assert('valor', 'Valor eh obrigatorio e deve ser um decimal').notEmpty().isFloat();
 
-        var erros = req.validationErrors();
+        let erros = req.validationErrors();
 
         if (erros) {
             console.log('Erros de validacao encontrados');
@@ -26,19 +26,40 @@ module.exports = function (app) {
         pagamento.status = 'CRIADO';
         pagamento.data = new Date;
 
-        var connection = app.persistencia.connectionFactory();
-        var pagamentoDao = new app.persistencia.PagamentoDao(connection);
+        let connection = app.persistencia.connectionFactory();
+        let pagamentoDao = new app.persistencia.PagamentoDao(connection);
 
         pagamentoDao.salva(pagamento, function (erros, result) {
             if (erros) {
-                console.log('Erro ao inserir no banco: ' + erros);
-                res.status(500).send(erros);
-            } else {
-                console.log('pagamento criado: ' + result);
-                res.location('/pagamentos/pagamento/' + result.insertId);
-                // 201 created
-                res.status(201).json(pagamento);
+                console.log(`nao foi possivel salvar o pagamento ERRO: ${JSON.stringify(erros)}`);
+                res.status(500).send('Houve um erro no servidor ao adicionar');
+                return;
             }
+
+            // obtem o id do pagamento recem criado no banco
+            pagamento.id = result.insertId;
+            // define header location
+            res.location(`/pagamentos/pagamento/${pagamento.id}`);
+           
+            // *HATEOAS
+           let response = {
+                dados_do_pagamento: pagamento,
+                links: [
+                    {
+                        href: `http:localhost:3000/pagamentos/pagamento/${pagamento.id}`,
+                        rel: 'confirmar',
+                        method: 'PUT'
+                    },
+                    {
+                        href: `http:localhost:3000/pagamentos/pagamento/${pagamento.id}`,
+                        rel: 'cancelar',
+                        method: 'DELETE'
+                    }
+                ]
+           };
+           
+            // 201 created
+            res.status(201).json(response);
         });
     });
 
@@ -85,8 +106,8 @@ module.exports = function (app) {
             }
 
             console.log(`pagamento cancelado id:${pagamento.id}`);
-            // 404 Not Content (não existe mais)
-            res.status(404).send(pagamento);
+            // 204 Not Content (não existe mais)
+            res.status(204).send(pagamento);
         });
     });
 }
