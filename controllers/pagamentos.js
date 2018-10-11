@@ -11,6 +11,18 @@ module.exports = function (app) {
         let pagamento = req.body;
         console.log('processando um requisicao de um novo pagamento');
 
+        // aplicando validações
+        req.assert('forma_de_pagamento', 'Forma de pagamento eh obrigatorio').notEmpty();
+        req.assert('valor', 'Valor eh obrigatorio e deve ser um decimal').notEmpty().isFloat();
+
+        var erros = req.validationErrors();
+
+        if (erros) {
+            console.log('Erros de validacao encontrados');
+            res.status(400).send(erros);
+            return;
+        }
+
         pagamento.status = 'CRIADO';
         pagamento.data = new Date;
 
