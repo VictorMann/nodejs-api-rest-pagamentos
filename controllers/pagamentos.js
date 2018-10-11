@@ -41,4 +41,27 @@ module.exports = function (app) {
             }
         });
     });
+
+    // alteração
+    app.put('/pagamentos/pagamento/:id', function (req, res) {
+
+        let id = req.params.id;
+        let pagamento = {};
+
+        pagamento.id = id;
+        pagamento.status = 'CONFIRMADO';
+
+        let connection = app.persistencia.connectionFactory();
+        let pagamentoDao = new app.persistencia.PagamentoDao(connection);
+
+        pagamentoDao.atualiza(pagamento, function (erros) {
+            if (erros) {
+                console.log('nao foi possivel atualizar: ' + erros);
+                res.status(500).send(erros);
+            } else {
+                console.log('pagamento atualizado id:' + pagamento.id);
+                res.send(pagamento);
+            }
+        });
+    });
 }
