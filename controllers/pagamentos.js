@@ -29,9 +29,16 @@ module.exports = function (app) {
         var connection = app.persistencia.connectionFactory();
         var pagamentoDao = new app.persistencia.PagamentoDao(connection);
 
-        pagamentoDao.salva(pagamento, function (errs, result) {
-            console.log('pagamento criado: ' + result);
-            res.json(pagamento);
+        pagamentoDao.salva(pagamento, function (erros, result) {
+            if (erros) {
+                console.log('Erro ao inserir no banco: ' + erros);
+                res.status(500).send(erros);
+            } else {
+                console.log('pagamento criado: ' + result);
+                res.location('/pagamentos/pagamento/' + result.insertId);
+                // 201 created
+                res.status(201).json(pagamento);
+            }
         });
     });
 }
