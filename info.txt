@@ -73,3 +73,27 @@ http://blog.caelum.com.br/hipermidia-e-contratos-dinamicos-menor-acoplamento/
 RESTful
 Qualquer sistema que aplique as ideias do estilo arquitetural REST, pode ser chamado de RESTful. Existe uma intensa discussão na comunidade sobre quando um sistema pode ser considerado RESTful ou não, porém, na maioria dos casos, basta apenas implantar uma parte do REST (em especial pensar em recursos, verbos fixos e ligações entre apresentações) para ser chamado de RESTfull
 =--
+
++--
+Coreografia de serviços com HATEOAS
+Um pagamento nasce a partir de uma transação com estado CRIADO e pode ser CONFIRMADO ou CANCELADO pelo cliente. Confirmar representa um "próximo passo" na vida do pagamento e pode ou não ser seguido pelo cliente. A ideia principal é que um recurso informe ao cliente quais os próximos passos ou relacionamentos, e atrás de cada relacionamento há um serviço transformador de dados.
+
+Uma vez criado um pagamento vamos então receber os dados dele e também os relacionamentos:
+{
+    "id":3,"status":"CRIADO","valor":29.9,
+    "links":[
+        {"rel":"confirmar","uri":"/pagamentos/pagamento/3","method":"PUT"},
+        {"rel":"cancelar","uri":"/pagamentos/pagamento/3","method":"DELETE"}
+    ]
+}
+No entanto, um pagamento no estado CONFIRMADO, podemos pedir apenas informações sobre o pagamento. Assim, a apresentação do recurso, além dos dados, também leva sempre as informações sobre o que é permitido executar:
+{
+    "id":3,"status":"CONFIRMADO","valor":29.9,
+    "links":[
+        {"rel":"self","uri":"/pagamentos/pagamento/3","method":"GET"}
+    ]
+}
+Essa forma de juntar os dados às ações é conhecida como hypermedia e é a essência do HATEOAS - Hypermedia as the Engine of Application State.
+
+Para que seja aplicado o HATEOAS ao PayFast basta que cada rota passe a adicionar no body do seu response as informações com os próximos links possíveis a serem seguidos após a requisição que foi feita.
+=--
