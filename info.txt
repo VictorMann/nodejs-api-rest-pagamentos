@@ -39,3 +39,7 @@ status code HTTP importante para api REST:
 404 Not Found: a url solicitada não foi encontrada.
 500 Internal Server Error: algo inesperado aconteceu do lado do servidor
 =--
+
++--
+A sigla REST vêm de Representational State Transfer e surgiu da tese de doutorado de Roy Fielding, descrevendo as ideias que levaram à criação do protocolo HTTP. A Web é o maior exemplo de uso de uma arquitetura REST, onde os verbos são as operações disponíveis no protocolo (GET, POST, DELETE, PUT, OPTION...), os recursos são identificados pelas URLs e as representações podem ser definidas com o uso de Mime Types(texto, XML, JSON e outros).
+=--
