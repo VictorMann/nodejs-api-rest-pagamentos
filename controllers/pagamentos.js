@@ -64,4 +64,29 @@ module.exports = function (app) {
             }
         });
     });
+
+    // cancela pagamento
+    app.delete('/pagamentos/pagamento/:id', function (req, res) {
+
+        let id = req.params.id;
+        let pagamento = {};
+
+        pagamento.id = id;
+        pagamento.status = 'CANCELADO';
+
+        let connection = app.persistencia.connectionFactory();
+        let pagamentoDao = new app.persistencia.PagamentoDao(connection);
+
+        pagamentoDao.atualiza(pagamento, function (erros) {
+            if (erros) {
+                console.log(`nao foi possivel cancelar pagamento id:${pagamento.id} | ERROR: ${JSON.stringify(erros)}`);
+                res.status(500).send('nao foi possivel cancelar');
+                return;
+            }
+
+            console.log(`pagamento cancelado id:${pagamento.id}`);
+            // 404 Not Content (não existe mais)
+            res.status(404).send(pagamento);
+        });
+    });
 }
