@@ -43,3 +43,21 @@ status code HTTP importante para api REST:
 +--
 A sigla REST vêm de Representational State Transfer e surgiu da tese de doutorado de Roy Fielding, descrevendo as ideias que levaram à criação do protocolo HTTP. A Web é o maior exemplo de uso de uma arquitetura REST, onde os verbos são as operações disponíveis no protocolo (GET, POST, DELETE, PUT, OPTION...), os recursos são identificados pelas URLs e as representações podem ser definidas com o uso de Mime Types(texto, XML, JSON e outros).
 =--
+
++--
+Métodos HTTP
+GET: retorna uma representação do recurso
+POST: cria ou altera o recurso
+PUT: cria ou altera o recurso
+DELETE: remove o recurso
+outras menos comuns, como HEAD e OPTIONS
+
+Os quatro principais verbos do protocolo HTTP são comumente associados às operações de CRUD em sistemas Restful (POST -> INSERT, GET -> SELECT, PUT -> UPDATE, DELETE -> DELETE). Há uma grande discussão dos motivos pelos quais usamos POST para criação (INSERT) e PUT para alteração (UPDATE). A razão principal é que o protocolo HTTP especifica que a operação PUT deve ser idempotente, já POST não.
+
+Idempotência e SAFE
+Operações idempotentes são operações que podem ser chamadas uma ou mais vezes, sempre com o mesmo resultado final.
+
+Uma operação é chamada SAFE se ela não altera nenhuma representação.
+
+Idempotência e SAFE são propriedades das operações e fundamentais para a escalabilidade da Web.
+=--
