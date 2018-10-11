@@ -61,3 +61,15 @@ Uma operação é chamada SAFE se ela não altera nenhuma representação.
 
 Idempotência e SAFE são propriedades das operações e fundamentais para a escalabilidade da Web.
 =--
+
++--
+Hipermídia
+Os recursos serão apresentados por meio de representações. Seguindo os princípios RESTful, representações devem ser interligadas umas com a outras. Isso é chamado hipermídia e conhecido na Web através de hyperlinks. No nosso exemplo, a representações de um livro poderia conter a URI dos autores. Como resultado disso, é possível navegar entre os recursos.
+
+Mais sobre hipermídia no blog da Caelum:
+
+http://blog.caelum.com.br/hipermidia-e-contratos-dinamicos-menor-acoplamento/
+
+RESTful
+Qualquer sistema que aplique as ideias do estilo arquitetural REST, pode ser chamado de RESTful. Existe uma intensa discussão na comunidade sobre quando um sistema pode ser considerado RESTful ou não, porém, na maioria dos casos, basta apenas implantar uma parte do REST (em especial pensar em recursos, verbos fixos e ligações entre apresentações) para ser chamado de RESTfull
+=--
