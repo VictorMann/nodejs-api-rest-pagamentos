@@ -8,12 +8,14 @@ module.exports = function (app) {
 
     // recebendo pagamento
     app.post('/pagamentos/pagamento', function (req, res) {
-        let pagamento = req.body;
+        // obtendo apenas o json de pagamento
+        let pagamento = req.body['pagamento'];
+
         console.log('processando um requisicao de um novo pagamento');
 
         // aplicando validações
-        req.assert('forma_de_pagamento', 'Forma de pagamento eh obrigatorio').notEmpty();
-        req.assert('valor', 'Valor eh obrigatorio e deve ser um decimal').notEmpty().isFloat();
+        req.assert('pagamento.forma_de_pagamento', 'Forma de pagamento eh obrigatorio').notEmpty();
+        req.assert('pagamento.valor', 'Valor eh obrigatorio e deve ser um decimal').notEmpty().isFloat();
 
         let erros = req.validationErrors();
 
@@ -39,6 +41,17 @@ module.exports = function (app) {
             // obtem o id do pagamento recem criado no banco
             pagamento.id = result.insertId;
             // define header location
+
+            if (pagamento.forma_de_pagamento == 'cartao') {
+                let cartao = req.body['cartao'];
+
+                console.log(cartao);
+                // 201 created
+                res.status(201).json(cartao);
+                return;
+            }
+
+
             res.location(`/pagamentos/pagamento/${pagamento.id}`);
            
             // *HATEOAS
@@ -60,6 +73,7 @@ module.exports = function (app) {
            
             // 201 created
             res.status(201).json(response);
+            
         });
     });
 
