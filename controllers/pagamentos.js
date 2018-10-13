@@ -1,6 +1,10 @@
 // rotas para pagamentos
 module.exports = function (app) {
 
+    const PAGAMENTO_CRIADO = 'CRIADO';
+    const PAGAMENTO_CONFIRMADO = 'CONFIRMADO';
+    const PAGAMENTO_CANCELADO = 'CANCELADO';
+    
     app.get('/pagamentos', function (req, res) {
         console.log('respondendo na rota pagamentos');
         res.send('Ok');
@@ -25,7 +29,7 @@ module.exports = function (app) {
             return;
         }
 
-        pagamento.status = 'CRIADO';
+        pagamento.status = PAGAMENTO_CRIADO;
         pagamento.data = new Date;
 
         let connection = app.persistencia.connectionFactory();
@@ -116,7 +120,7 @@ module.exports = function (app) {
         let pagamento = {};
 
         pagamento.id = id;
-        pagamento.status = 'CONFIRMADO';
+        pagamento.status = PAGAMENTO_CONFIRMADO;
 
         let connection = app.persistencia.connectionFactory();
         let pagamentoDao = new app.persistencia.PagamentoDao(connection);
@@ -139,7 +143,7 @@ module.exports = function (app) {
         let pagamento = {};
 
         pagamento.id = id;
-        pagamento.status = 'CANCELADO';
+        pagamento.status = PAGAMENTO_CANCELADO;
 
         let connection = app.persistencia.connectionFactory();
         let pagamentoDao = new app.persistencia.PagamentoDao(connection);
