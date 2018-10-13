@@ -1,22 +1,25 @@
 var soap = require('soap');
 
-// webservice SOAP dos correios 
-// wsdl = web service descriptor language
-soap.createClient(
-    'http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?wsdl',
-    function (erro, cliente) {
-
+// função construtora
+// @_url => webservice SOAP dos correios
+function correiosSOAPClient () {
+    // ?wsdl = web service descriptor language
+    this._url = 'http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?wsdl';
+}
+// calcula prazo
+correiosSOAPClient.prototype.calculaPrazo = function (args, callback) {
+    soap.createClient(this._url, function (erro, cliente) {
+        // erro ao criar o cliente
+        if (erro) {
+            console.log(erro);
+            return;
+        }
+        
         console.log('cliente SOAP criado');
+        cliente.CalcPrazo(args, callback);
+    });
+};
 
-        cliente.CalcPrazo(
-            {
-                'nCdServico': '40010',
-                'sCepOrigem': '04101300',
-                'sCepDestino': '65000600'
-            },
-            function (err, resultado) {
-                console.log( JSON.stringify(resultado) );
-            }
-        );
-    }
-)
+module.exports = function () {
+    return correiosSOAPClient;
+};
