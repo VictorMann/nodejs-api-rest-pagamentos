@@ -50,12 +50,37 @@ module.exports = function (app) {
                 let clienteCartoes = new app.servicos.clienteCartoes();
                 // invoca metodo autoriza
                 clienteCartoes.autoriza(cartao, function (err, requ, resp, retorno) {
-                    console.log(retorno);
-                    // 201 created
-                    res.status(201).send(retorno);
-                });
+                    // caso haja um erro
+                    if (err) {
+                        console.log(err);
+                        res.status(400).send(err);
+                        return;
+                    }
 
-                return;
+                    res.location(`/pagamentos/pagamento/${pagamento.id}`);
+           
+                    // *HATEOAS
+                   let response = {
+                        dados_do_pagamento: pagamento,
+                        cartao: retorno,
+                        links: [
+                            {
+                                href: `http:localhost:3000/pagamentos/pagamento/${pagamento.id}`,
+                                rel: 'confirmar',
+                                method: 'PUT'
+                            },
+                            {
+                                href: `http:localhost:3000/pagamentos/pagamento/${pagamento.id}`,
+                                rel: 'cancelar',
+                                method: 'DELETE'
+                            }
+                        ]
+                   };
+                   
+                    // 201 created
+                    res.status(201).json(response);
+                    
+                });
             }
 
 
