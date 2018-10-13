@@ -43,11 +43,18 @@ module.exports = function (app) {
             // define header location
 
             if (pagamento.forma_de_pagamento == 'cartao') {
+                // obtem dados do cartao
                 let cartao = req.body['cartao'];
-
                 console.log(cartao);
-                // 201 created
-                res.status(201).json(cartao);
+                // instancia servico CartoesCliente
+                let clienteCartoes = new app.servicos.clienteCartoes();
+                // invoca metodo autoriza
+                clienteCartoes.autoriza(cartao, function (err, requ, resp, retorno) {
+                    console.log(retorno);
+                    // 201 created
+                    res.status(201).send(retorno);
+                });
+
                 return;
             }
 
