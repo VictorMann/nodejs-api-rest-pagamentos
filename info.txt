@@ -97,3 +97,7 @@ Essa forma de juntar os dados às ações é conhecida como hypermedia e é a es
 
 Para que seja aplicado o HATEOAS ao PayFast basta que cada rota passe a adicionar no body do seu response as informações com os próximos links possíveis a serem seguidos após a requisição que foi feita.
 =--
+
++--
+O restify simplifica bastante a vida para consumir serviços REST, mas lembre sempre que serviços REST nada mais são do que integração via HTTP, então qualquer chamada via request HTTP normal também deveria funcionar normalmente.
+=--
