@@ -101,3 +101,32 @@ Para que seja aplicado o HATEOAS ao PayFast basta que cada rota passe a adiciona
 +--
 O restify simplifica bastante a vida para consumir serviços REST, mas lembre sempre que serviços REST nada mais são do que integração via HTTP, então qualquer chamada via request HTTP normal também deveria funcionar normalmente.
 =--
+
++--
+Streaming de dados
+Muitas das apis assíncronas utilizadas no Node.js trabalham utilizando o chamado buffer mode. Em uma operação de entrada de dados o buffer mode faz com que todos os dados oriundos da requisição fiquem armazenados em um buffer. Para que então seja passado para algum callback tão somente todo o recurso tenha sido lido.
+
+Esse tipo de estratégia não é muito interessante para o Node.js, visto que ele é pensando para trabalhar com operações de I/O e faz isso muito bem, mas quando a necessidade é ficar manipulando muito recurso na memória, que é o que fazem os buffers, ele passa a perder bastante performance.
+
+A solução ideal para resolver essa questão seria conseguir ir processando os dados conforme eles fossem chegando, ao invés de ter que esperar a leitura do dado por inteiro. É exatamente isso que a api de Streams do Node.js possibilita ao programador.
+
+Existem diversas vantagens em se utilizar essa api sempre que possível. Veja as principais:
+
+Eficiência espacial
+Primeiro de tudo, os Streams nos permitem fazer coisas que não seriam possíveis somente bufferizando dados processando-os todos de uma vez.
+
+Por exemplo: imagine que a aplicação precise ler arquivos muito grandes da ordem dos mega ou até gigabytes. Agora imagine que a aplicação precise ler alguns desses arquivos de forma concorrente. Claramente utilizar uma api que retorna um grande buffer quando o arquivo está completamente lido não é uma boa ideia. A aplicação iria fatalmente cair por falta de memória.
+
+Além disso, os buffers na V8, a runtime sobre a qual o Node.js roda, suporta como tamanho máximo para buffers um número que sequer chega a 1 GB de memória. Ou seja a aplicação esbarraria em uma limitação do próprio ambiente antes mesmo de chegar ao limite físico de memória.
+
+Utilizar Streams nessa situação reduz em muito o uso de memória da aplicação e faz com que ela rode de uma maneira mais suave.
+
+Eficiência temporal
+Vamos considerar agora o caso de uma aplicação que precisa comprimir um arquivo e após fazer o seu upload para um servidor HTTP remoto. Este servidor então recebe o arquivo, descompacta e salva-o em seu sistema de arquivos.
+
+Se o cliente tiver sido implementando utilizando uma api com buffers, o upload só iria iniciar uma vez que o arquivo inteiro tenha sido lido e compactado. Do outro lado e descompressão também só iria ter início uma vez que o arquivo inteiro tenha sido recebido.
+
+Uma melhor solução seria implementar a mesma funcionalidade com streams. Do lado do cliente, os streams permitem que aplicação vá lendo e enviando os arquivos conforme eles forem sendo lidos do sistema de arquivos. E do lado do servidor ela permite que seja feita a descompactação de cada pedaço de arquivo, conforme eles vão sendo recebidos do cliente remoto. Esses pedaços costumam ser chamados de chunks.
+
+É bem fácil perceber que a abordagem com streams gera um ganho de tempo gigantesco e que escala bem melhor.
+=--
