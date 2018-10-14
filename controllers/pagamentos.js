@@ -49,7 +49,7 @@ module.exports = function (app) {
             if (pagamento.forma_de_pagamento == 'cartao') {
                 // obtem dados do cartao
                 let cartao = req.body['cartao'];
-                console.log(cartao);
+                
                 // instancia servico CartoesCliente
                 let clienteCartoes = new app.servicos.clienteCartoes();
                 // invoca metodo autoriza
@@ -81,10 +81,13 @@ module.exports = function (app) {
                         ]
                    };
                    
+                   console.log(response);
                     // 201 created
                     res.status(201).json(response);
                     
                 });
+
+                return;
             }
 
 
