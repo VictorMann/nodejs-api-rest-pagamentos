@@ -25,7 +25,7 @@ module.exports = function (app) {
         let response = {
             dados_do_cartao: cartao,
         };
-
+        console.log(response);
         res.status(201).json(response);
         return;
     });
