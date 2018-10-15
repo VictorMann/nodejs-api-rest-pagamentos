@@ -64,7 +64,7 @@ module.exports = function (app) {
                     res.location(`/pagamentos/pagamento/${pagamento.id}`);
            
                     // *HATEOAS
-                   let response = {
+                    let response = {
                         dados_do_pagamento: pagamento,
                         cartao: retorno,
                         links: [
@@ -79,9 +79,15 @@ module.exports = function (app) {
                                 method: 'DELETE'
                             }
                         ]
-                   };
-                   
-                   console.log(response);
+                    };
+
+                    // grava em cache do memcached
+                    let memcachedClient = app.servicos.memcachedClient();
+                    memcachedClient.set(`pagamento-${pagamento.id}`, response, 60000, function (erro) {
+                        console.log(`add memcached chave: pagamento-${pagamento.id}`);
+                    });
+
+                   console.log(`pagamento com cartao criado`);
                     // 201 created
                     res.status(201).json(response);
                     
@@ -94,7 +100,7 @@ module.exports = function (app) {
             res.location(`/pagamentos/pagamento/${pagamento.id}`);
            
             // *HATEOAS
-           let response = {
+            let response = {
                 dados_do_pagamento: pagamento,
                 links: [
                     {
@@ -108,11 +114,17 @@ module.exports = function (app) {
                         method: 'DELETE'
                     }
                 ]
-           };
-           
+            };
+
+            // grava em cache do memcached
+            let memcachedClient = app.servicos.memcachedClient();
+            memcachedClient.set(`pagamento-${pagamento.id}`, response, 60000, function (erro) {
+                console.log(`add memcached chave: pagamento-${pagamento.id}`);
+            });
+
+            console.log(`pagamento criado`);
             // 201 created
             res.status(201).json(response);
-            
         });
     });
 
@@ -124,15 +136,27 @@ module.exports = function (app) {
         let connection = app.persistencia.connectionFactory();
         let pagamentoDao = new app.persistencia.PagamentoDao(connection);
 
-        pagamentoDao.buscaPorId(id, function (err, result) {
-            // caso haja um erro no banco
-            if (err) {
-                console.log(err);
-                res.status(500).send(`ERROR: consulta do pagamento id:${id}`);
-                return;
+        // consulta o cache do memcached
+        let memcachedClient = app.servicos.memcachedClient();
+        memcachedClient.get(`pagamento-${id}`, function (erro, retorno) {
+            // caso não encontrou busca no banco
+            if (erro || !retorno) {
+                console.log('MISS - chave nao encontrada');
+                pagamentoDao.buscaPorId(id, function (err, result) {
+                    // caso haja um erro no banco
+                    if (err) {
+                        console.log(err);
+                        res.status(500).send(`ERROR: consulta do pagamento id:${id}`);
+                        return;
+                    }
+                    console.log(`pagamento consultado id:${id}`);
+                    res.send(result);
+                });
+            // se encontrou
+            } else {
+                console.log(`HIT - valor: ${JSON.stringify(retorno)}`);
+                res.send(retorno);
             }
-            console.log(`pagamento consultado id:${id}`);
-            res.send(result);
         });
     });
 
