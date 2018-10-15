@@ -130,3 +130,31 @@ Uma melhor solução seria implementar a mesma funcionalidade com streams. Do la
 
 É bem fácil perceber que a abordagem com streams gera um ganho de tempo gigantesco e que escala bem melhor.
 =--
+
++--
+O Memcached é definido como um sistema de caching de objetos em memória grátis, open source, distribuído e de alta performance, genérico por natureza, mas com uma forte intenção de acelerar o processamento de aplicações web dinâmicas, aliviando a carga de acessos ao banco de dados. Exatamente o objetivo que tínhamos ao pensar em implementar uma política de cache no PayFast.
+
+Ele funciona baseado em um esquema chave-valor que armazena pequenos pedaços de dados de qualquer tipo desejado (string, objetos...) em memória. Podendo esses dados ser oriundos de consultas à banco de dados, à outras APIs ou até mesmo do carregamento de páginas.
+
+Ele é um framework simples, porém bastante poderoso. Fácil de instalar, fazer deploy e de desenvolver sobre ele, por ter um design simples. Além de prover APIs para diversas linguagens de programação.
+
+A instalação do Memcached é muito simples. Uma forma bem padrão de fazê-la é baixar a última versão direto do site oficial, descompactar e instalar:
+
+    wget http://memcached.org/latest
+    tar -zxvf memcached-1.x.x.tar.gz
+    cd memcached-1.x.x
+    ./configure && make && make test && sudo make install
+
+Este exemplo mostra a instalação feita diretamente no terminal.
+
+Após instalado, basta executar um comando no próprio terminal para que ele suba e fique pronto para receber conexões:
+
+    memcached -vv
+
+// -vv  indica modo verboso
+
+objeto memcached:
+    retries:    10, o número de retentativas feitas por request.
+    retry:      10000, o tempo entre a falha de um servidor e uma tentativa de colocá-lo de volta em serviço.
+    remove:     true, autoriza a remoção automática de servidores mortos do pool.
+=--
