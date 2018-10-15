@@ -116,6 +116,26 @@ module.exports = function (app) {
         });
     });
 
+    // consulta um pagamento
+    app.get('/pagamentos/pagamento/:id', function (req, res) {
+
+        let id = req.params.id;
+
+        let connection = app.persistencia.connectionFactory();
+        let pagamentoDao = new app.persistencia.PagamentoDao(connection);
+
+        pagamentoDao.buscaPorId(id, function (err, result) {
+            // caso haja um erro no banco
+            if (err) {
+                console.log(err);
+                res.status(500).send(`ERROR: consulta do pagamento id:${id}`);
+                return;
+            }
+            console.log(`pagamento consultado id:${id}`);
+            res.send(result);
+        });
+    });
+
     // alteração
     app.put('/pagamentos/pagamento/:id', function (req, res) {
 
