@@ -11,6 +11,19 @@ if (cluster.isMaster) {
         cluster.fork();
     });
 
+    // evento 
+    cluster.on('listening', worker => {
+        console.log(`cluster conectado ${worker.process.pid}`);
+    });
+    // evento
+    // para matar processo no window
+    // tasklist -> ver lista de processos
+    // tskill <code_process>
+    cluster.on('exit', worker => {
+        console.log('cluster %d desconectado', worker.process.pid);
+        cluster.fork();
+    });
+
 } else {
     console.log('thread slave');
     require('./index');
