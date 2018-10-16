@@ -15,6 +15,11 @@ if (cluster.isMaster) {
     cluster.on('listening', worker => {
         console.log(`cluster conectado ${worker.process.pid}`);
     });
+
+    // evento
+    cluster.on("disconnect", worker => {
+        console.log("cluster %d desconectado", worker.process.pid);
+    });
     // evento
     // para matar processo no window
     // tasklist -> ver lista de processos
