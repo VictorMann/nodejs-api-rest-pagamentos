@@ -1,4 +1,10 @@
 var winston = require('winston');
+var fs = require('fs');
+
+// cado a pasta logs não exista; crie
+if (!fs.existsSync('logs')) {
+    fs.mkdirSync('logs');
+}
 
 module.exports = new winston.Logger({
     transports: [
