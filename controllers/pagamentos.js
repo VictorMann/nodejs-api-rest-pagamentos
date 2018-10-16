@@ -1,3 +1,5 @@
+var logger = require('../servicos/logger');
+
 // rotas para pagamentos
 module.exports = function (app) {
 
@@ -139,6 +141,10 @@ module.exports = function (app) {
         // consulta o cache do memcached
         let memcachedClient = app.servicos.memcachedClient();
         memcachedClient.get(`pagamento-${id}`, function (erro, retorno) {
+
+            // adcionando ao logger
+            logger.log('info', `consultando pagamnento id:${id}`);
+
             // caso não encontrou busca no banco
             if (erro || !retorno) {
                 console.log('MISS - chave nao encontrada');
