@@ -203,3 +203,46 @@ Para finalmente escrever o log agora basta utilizar o objeto que contem a camada
     logger.log('info', 'Log forçando o nível info via parâmetro na função log().');
     logger.info('Log forçando o nível info via invocação direta função info()');
 =--
+
++--
+ogando as requisições com Morgan
+Claro que a ideia principal do uso dos logs é que eles possam ficar localizados nas partes mais críticas dos sistemas para que se tenha as informações detalhadas de cada execução. Uma forma de fazer isso, seria escrevendo uma camada do winston para cada rota criada no sistema.
+
+Mas essa opção obviamente seria mais trabalhosa que o necessário e teríamos que espalhar código repetido e difícil de manter por todo o projeto. Uma maneira mais elegante de fazer essa implementação seria interceptando todas as requisições em um ponto único do código.
+
+Como o express é quem coordena as requisições, o seu arquivo de configurações custom-express.js parece ser um forte candidato para receber este código. E de fato, já existe uma lib cujo objetivo é exatamente esse: o morgan, que é um middleware escritor de logs HTTP para Node.js.
+
+Após instalado na aplicação via npm, o morgan precisa ser definido como um novo middleware do express. Essa implementação deve ser feita no custom-express.js. O primeiro passo é fazer o require da lib:
+
+    ...
+    var morgan = require('morgan');
+    var logger = require('../persistencia/logger.js');
+
+Um detalhe importante é que morgan é basicamente um middleware mesmo, ou seja, a especialidade dele é saber se integrar corretamente com o express. Mas ele não é um especialista em escrever os logs em si. Por esse motivo é que foi carregado também o arquivo persistencia/logger.js, que contém as implementação do winston. A ideia então é aproveitar aquilo que o winston faz de melhor para que seja aproveitado pelo morgan. Um belo exemplo de reuso de código.
+
+Em seguida, deve ser feita de fato a adição do morgan como um novo middleware do express:
+
+    ...
+    module.exports = function() {
+      var app = express();
+
+      app.use(morgan("common", {
+        stream: {
+          write: function(message){
+            logger.info(message)
+          }
+        }
+      }));
+    ...
+Essa adição é feita invocando a função use a partir do objeto do express e dentro dessa invocação é passada como parâmetro a chama ao objeto do morgan: morgan(). Essa chamada também recebe alguns parâmetros: o primeiro deles indica o formato do log e o segundo é um json com configurações mais específicas.
+
+O formato do log pode ser um formato já pré-definido ou algum que tenha sido criado. Nesse caso foi utilizado o "commom". Este é um formato pré-definido que significa a saída de log padrão no nível comum segundo o Padrão da Apache. Em outras palavras, um log com os seguintes itens para cada requisição:
+
+    :remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length]
+No segundo parâmetro, o json, foi definido que o log será escrito via stream e que o código que deve ser executado no momento que o morgan interceptar o request para fazer uma escrita deve ser a função que foi definida no atributo write:
+
+    write: function(message){
+      logger.info(message)
+    }
+Essa função usa objeto logger para escrever uma mensagem. Esse objeto é o qe foi definido com o winston e carregado para este arquivo no início dessa seção. A message que chega como parâmetro é passada pelo próprio express e seu formato foi definido pelo atributo "commons" conforme já demonstrado.
+=--
