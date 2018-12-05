@@ -9,7 +9,20 @@ module.exports = function (app) {
     
     app.get('/pagamentos', function (req, res) {
         console.log('respondendo na rota pagamentos');
-        res.send('Ok');
+
+        let connection = app.persistencia.connectionFactory();
+        let pagamentoDao = new app.persistencia.PagamentoDao(connection);
+
+        pagamentoDao.lista((erros, result) => {
+            // caso haja um erro no banco
+            if (erros) {
+                console.log(erros);
+                res.status(500).send(`ERROR: consulta lista de pagamentos`);
+                return;
+            }
+            console.log('consulta lista de pagamentos');
+            res.send(result);
+        });
     });
 
     // recebendo pagamento
